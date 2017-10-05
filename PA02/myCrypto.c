@@ -28,7 +28,10 @@ size_t fileDigest( int fd_in , uint8_t *digest , int fd_save )
     unsigned int  mdLen;
     
     EVP_MD_CTX *mdCtx;
+    const EVP_MD *md;
     
+    mdCtx = EVP_MD_CTX_create();
+    md = EVP_get_digestbyname(digest);
     
     unsigned char incoming[INPUT_CHUNK];
     
@@ -39,12 +42,15 @@ size_t fileDigest( int fd_in , uint8_t *digest , int fd_save )
 	}
     
     // Compute the SHA256 hash value of this incoming data into the array 'digest'
-    EVP_DigestInit(mcCtx, );
+	EVP_DigestInit_ex(mdCtx, md, NULL);
+	EVP_DigestUpdate(mdCtx, incoming, INPUT_CHUNK);
+	EVP_DigestFinal_ex(mdCtx, md_value, &mdLen);
+	EVP_MD_CTX_destroy(mdCtx);
     
-    // If the file descriptor 'fd_save' is > 0, store a copy of the incoming data to 'fd_save'
+    // If the file descriptor 'fd_save' is > 0
     if (fd_save > 0)
 	{
-	
+		//store a copy of the incoming data to 'fd_save'
 	}
 	
 	EVP_DigestUpdate();
