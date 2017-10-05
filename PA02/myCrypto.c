@@ -4,8 +4,8 @@ PA-02: Messaage Digest & Signature using Pipes
 FILE:   myCrypto.c
 
 Written By: 
-     1- 
-     2-
+     1- Sydney Edwards
+     2- James Nordike
      
 Submitted on: 
 ----------------------------------------------------------------------------*/
@@ -23,20 +23,33 @@ void handleErrors( char *msg)
 #define INPUT_CHUNK   16384
 
 size_t fileDigest( int fd_in , uint8_t *digest , int fd_save )
-// Read all the incoming data from 'fd_in' file descriptor
-// Compute the SHA256 hash value of this incoming data into the array 'digest'
-// If the file descriptor 'fd_save' is > 0, store a copy of the incoming data to 'fd_save'
-// Returns actual size in bytes of the computed hash value
 {
-    unsigned int  mdLen ;
+	//size in bytes of the computed hash value
+    unsigned int  mdLen;
     
-	EVP_MD_CTX *mdCtx;
-	EVP_DigestInit();
+    EVP_MD_CTX *mdCtx;
+    
+    
+    unsigned char incoming[INPUT_CHUNK];
+    
+    // Read all the incoming data from 'fd_in' file descriptor
+	if(read(fd_in, incoming, INPUT_CHUNK) < 1)
+	{
+		abort();
+	}
+    
+    // Compute the SHA256 hash value of this incoming data into the array 'digest'
+    EVP_DigestInit(mcCtx, );
+    
+    // If the file descriptor 'fd_save' is > 0, store a copy of the incoming data to 'fd_save'
+    if (fd_save > 0)
+	{
+	
+	}
+	
 	EVP_DigestUpdate();
-	EVP_MD_CTX_Destroy();
-    // ....
-
-    
+	
+    // Returns size of hash value
     return mdLen ;
 }
 
