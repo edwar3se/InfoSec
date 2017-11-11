@@ -139,14 +139,19 @@ int main ( int argc , char * argv[] )
         BN_CTX_init(ctx2);
 	
 	elgamalSign(digest, digestLen, dh->p, dh->g, dh->priv_key, r, s, ctx2);
-	printf("hello\n");
+	//printf("hello\n");
 	BN_print_fp(log, r);
 	fflush(log);
-	
+
 	fprintf(log, "\n    s : ");
 	BN_print_fp(log, s);
 	printf("\n");
 	fflush(log);
+
+	//write signature over
+	BN_write_fd(r, fd_ctrl);
+	BN_write_fd(s, fd_ctrl);
+
     EVP_cleanup();
     ERR_free_strings();
 
