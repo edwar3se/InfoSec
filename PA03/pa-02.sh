@@ -4,7 +4,7 @@ echo "Script to run Programming Assignment #3"
 echo "By: Sydney and James"
 echo
 
-rm -f dispatcher amal/amal amal/logAmal.txt basim/basim basim/logBasim.txt basim/bunny.mp4 
+rm -f dispatcher amal/amal amal/logAmal.txt basim/bunny.mp4 
 
 # Generate public/private key-pair for Amal
 cd amal
@@ -22,7 +22,6 @@ cd ..
 echo "=============================="
 echo "Compiling all source"
 	gcc amal/amal.c    myCrypto.c   -o amal/amal    -lcrypto
-	gcc basim/basim.c  myCrypto.c   -o basim/basim  -lcrypto
 	gcc wrappers.c     dispatcher.c -o dispatcher
 
 echo "=============================="

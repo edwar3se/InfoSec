@@ -67,12 +67,15 @@ size_t fileDigest( int fd_in , uint8_t *digest , int fd_save )
 // Returns 1 on success, 0 on failure
 int BN_write_fd( const BIGNUM *bn , int fd_out)
 {
-	char * number;
-	int len = BN_bn2bin(bn, number);
+	unsigned char to[64];
+
+	int len = BN_bn2bin(bn, to);
+
 	if(len == -1)
 		return 0;
+
 	write(fd_out, &len, sizeof(len));
-	write(fd_out, number, sizeof(number));
+	write(fd_out, to, sizeof(to));
 	return 1;
 }
 
@@ -87,26 +90,91 @@ BIGNUM * BN_read_fd( int fd_in )
 	read(fd_in, size, sizeof(int));
 	read(fd_in, num, *size);
 
-	return BN_bin2bn(num, *size, NULLi;
+	return BN_bin2bn(num, *size, NULL);
 }
 
 // Returns a newly-created BIGNUM such that:1 < BN< (p-1)
 BIGNUM * BN_myRandom(const BIGNUM *p )
 {
-	
+	BIGNUM * b1;
+	b1 = BN_new();
+	do
+	{
+		BN_rand_range(b1, p);
+	} while(BN_is_one(b1) || BN_is_zero(b1));
+
+	return b1;
 }
 
 // Usethe prime 'q', the primitive root 'gen',and the private 'x' 
 // to compute the Elgamal signature (r,s) on the 'len'-byte long 'digest'
-void elgamalSign( const uint8_t *digest , int len,  const BIGNUM *q , const BIGNUM *gen ,const BIGNUM *x , BIGNUM *r , BIGNUM *s, BN_CTX*ctx)
+void elgamalSign( const uint8_t *digest , int len,  const BIGNUM *q , const BIGNUM *gen ,const BIGNUM *x , BIGNUM *r , BIGNUM *s, BN_CTX * ctx)
 {
+	//raise gen to x = result mod q
+	BIGNUM * res;
+	BN_mod_exp(res, gen, x, q, ctx);
 
+
+	BIGNUM * GCD;
+	//q2 = q -1
+	BIGNUM * q2;
+	BIGNUM * k;
+	BN_sub(q2, q, BN_value_one());
+
+	//generate random big number
+	do
+	{
+		k = BN_myRandom(q);
+		//check GCD
+		BN_gcd(GCD, k, q2, ctx);
+	} while(!BN_is_one(GCD));
+
+	//compute r
+	BN_mod_exp(r, gen, k, q, ctx);
+	//mod inverse of k
+	BIGNUM * inverse;
+	BN_mod_inverse(inverse, k, q2, ctx);
+
+	//compute s
+	BN_mod_mul(s, x, r, q2, ctx);
+	BN_set_negative(s, 3);
+	BN_add_word(s, *digest);
+	BN_mod_mul(s, inverse, s, q2, ctx);
+	
 }
 // Use the prime 'q', the primitive root'gen',  and the public 'y' 
-// to validate the Elgamal signature (r,s) on the 'len'-byte long 'digest'
-// Return 1 if valid, 0 otherswise
+// to validate the Elgama signature (r,s) on tt'
+// Return 1 if valid, 0 otherswisdkfjks
+
 int elgamalValidate( const uint8_t *digest , int len ,  const BIGNUM *q , const BIGNUM *gen , const BIGNUM *y , BIGNUM *r , BIGNUM *s , BN_CTX *ctx )
 {
+	BIGNUM * qMinusOne;
+	BN_sub(qMinusOne, q, BN_value_one());
+	if (BN_cmp(r, qMinusOne) > -1 || BN_cmp(BN_value_one(), r) > -1)
+		return 0;
+
+	//compute Mb
+	BIGNUM * digest2;
+	BN_set_word(digest2, *digest);
+
+	//compute V1
+	BIGNUM * v1;
+	BN_mod_exp(v1, gen, digest2, q, ctx);
+
+	//computer v2
+	BIGNUM * v2;
+	BIGNUM * t1;
+	BIGNUM * t2;
+	BIGNUM * t3;
+	BN_exp(t1, y, r, ctx);
+	BN_exp(t2, r, s, ctx);
+	BN_mul(t3, t1, t2, ctx);
+	BN_mod(v2,t3, q, ctx);
+
+	//compare
+	if(BN_cmp(v1, v2) == 0)
+		return 1;
+
 	return 0;
 }
 //-----------------------------------------------------------------------------

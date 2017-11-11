@@ -22,4 +22,12 @@ Submitted on:
 void   handleErrors( char *msg) ;
 RSA    *getRSAfromFile(char * filename, int public) ;
 size_t fileDigest( int fd_in , uint8_t *digest , int fd_save) ;
-
+int BN_write_fd( const BIGNUM *bn , int fd_out) ;
+BIGNUM * BN_read_fd( int fd_in ) ;
+BIGNUM * BN_myRandom( const BIGNUM *p ) ;
+void elgamalSign( const uint8_t *digest , int len ,
+ const BIGNUM *q , const BIGNUM *gen , const BIGNUM *x ,
+ BIGNUM *r , BIGNUM *s , BN_CTX *ctx) ;
+int elgamalValidate( const uint8_t *digest , int len ,
+ const BIGNUM *q , const BIGNUM *gen , const BIGNUM *y ,
+ BIGNUM *r , BIGNUM *s , BN_CTX *ctx ) ;

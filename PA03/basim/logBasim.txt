@@ -1,2 +1,5 @@
-This is Basim. Will receive digest from FD 3 and file from FD 5
-This is Basim. Starting to receive incoming file and compute its digest
+This is Basim. Will receive CTRL from FD 3, data from FD 5
+
+Basim: Received these parameters (in Hex) from Amal
+   Prime        : CC43ECED8BA5AD657154629B90B91FD46FB6F9479CEAA706F01BA4EE153B968B8307B030013884287879A8139F84E7515BC32A874BAFFC3BD7168FC976E325D3
+   Root         : 2
