@@ -114,11 +114,11 @@ int main ( int argc , char * argv[] )
     	uint8_t *sig;
 	size_t digestLen = fileDigest(fd_in2, digest, fd_data);	
 
-	//RSA *rsa_privK = getRSAfromFile ("amal/amal_priv_key.pem" , 0);
+	RSA *rsa_privK = getRSAfromFile ("amal/amal_priv_key.pem" , 0);
 
-	//uint8_t *encryptedDigest = malloc( RSA_size(rsa_privK ) );  
-    	//if( ! encryptedDigest )
-       // 	{ printf("No memory for Digest\n" );  exit(-1) ; }
+	uint8_t *encryptedDigest = malloc( RSA_size(rsa_privK ) );  
+    	if( ! encryptedDigest )
+        	{ printf("No memory for Digest\n" );  exit(-1) ; }
 
 	BIO_dump_fp (log, (const char *) digest, digestLen);
 
