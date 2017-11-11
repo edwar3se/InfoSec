@@ -11,6 +11,7 @@ Submitted on: October 13, 2017
 ----------------------------------------------------------------------------*/
 #include <openssl/evp.h>
 #include "myCrypto.h"
+#include <stdlib.h>
 
 void handleErrors( char *msg)
 {
@@ -64,35 +65,47 @@ size_t fileDigest( int fd_in , uint8_t *digest , int fd_save )
 
 // Sends the #of bytes , then the bytes themselves of a BIGNUM to file descriptor fd_out
 // Returns 1 on success, 0 on failure
-int BN_write_fd( constBIGNUM *bn , intfd_out)
+int BN_write_fd( const BIGNUM *bn , int fd_out)
 {
-	return 0;
+	char * number;
+	int len = BN_bn2bin(bn, number);
+	if(len == -1)
+		return 0;
+	write(fd_out, &len, sizeof(len));
+	write(fd_out, number, sizeof(number));
+	return 1;
 }
 
 // Read the #of bytes , then the bytes themselves of a BIGNUM from file descriptor fd_in
 // Returns: a newly-created BIGNUM, which should be freed later by the caller
 //          NULL on failure
-BIGNUM * BN_read_fd( intfd_in )
+BIGNUM * BN_read_fd( int fd_in )
 {
-	return NULL;
+	char* num;
+	int * size;
+
+	read(fd_in, size, sizeof(int));
+	read(fd_in, num, *size);
+
+	return BN_bin2bn(num, *size, NULLi;
 }
 
 // Returns a newly-created BIGNUM such that:1 < BN< (p-1)
-BIGNUM * BN_myRandom(constBIGNUM *p )
+BIGNUM * BN_myRandom(const BIGNUM *p )
 {
-	return NULL;
+	
 }
 
 // Usethe prime 'q', the primitive root 'gen',and the private 'x' 
 // to compute the Elgamal signature (r,s) on the 'len'-byte long 'digest'
-void elgamalSign( constuint8_t *digest , intlen,  constBIGNUM *q , constBIGNUM *gen ,constBIGNUM *x , BIGNUM *r , BIGNUM *s, BN_CTX*ctx)
+void elgamalSign( const uint8_t *digest , int len,  const BIGNUM *q , const BIGNUM *gen ,const BIGNUM *x , BIGNUM *r , BIGNUM *s, BN_CTX*ctx)
 {
 
 }
 // Use the prime 'q', the primitive root'gen',  and the public 'y' 
 // to validate the Elgamal signature (r,s) on the 'len'-byte long 'digest'
 // Return 1 if valid, 0 otherswise
-int elgamalValidate( constuint8_t *digest , intlen ,  const BIGNUM *q , const BIGNUM *gen , constBIGNUM *y , BIGNUM *r , BIGNUM *s , BN_CTX *ctx )
+int elgamalValidate( const uint8_t *digest , int len ,  const BIGNUM *q , const BIGNUM *gen , const BIGNUM *y , BIGNUM *r , BIGNUM *s , BN_CTX *ctx )
 {
 	return 0;
 }

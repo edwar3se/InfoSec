@@ -25,10 +25,10 @@ int main ( int argc , char * argv[] )
         printf("Missing command-line arguments: %s <ctrlFD> <dataFD>\n" , argv[0]) ;
         exit(-1) ;
     }
-    fd_ctrl = atoi( argv[1] ) ;
-    fd_data = atoi( argv[2] ) ;
+    int fd_ctrl = atoi( argv[1] ) ;
+    int fd_data = atoi( argv[2] ) ;
 
-    log = fopen("basim/logBasim.txt" , "w" );
+    FILE * log = fopen("basim/logBasim.txt" , "w" );
     if( ! log )
     {
         fprintf( stderr , "This is Basim. Could not create log file\n");
@@ -37,7 +37,7 @@ int main ( int argc , char * argv[] )
     fprintf( log , "This is Basim. Will receive digest from FD %d and file from FD %d\n" ,
                    fd_ctrl , fd_data );
 
-    fd_out = open("basim/bunny.mp4" , O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR ) ;
+    int fd_out = open("basim/bunny.mp4" , O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR ) ;
     if( fd_out == -1 )
     {
         fprintf( stderr , "This is Basim. Could not open output file\n");

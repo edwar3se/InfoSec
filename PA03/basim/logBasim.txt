@@ -1,0 +1,2 @@
+This is Basim. Will receive digest from FD 3 and file from FD 5
+This is Basim. Starting to receive incoming file and compute its digest
