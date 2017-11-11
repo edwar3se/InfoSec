@@ -34,7 +34,7 @@ int main ( int argc , char * argv[] )
         fprintf( stderr , "This is Amal. Could not create log file\n");
         exit(-1) ;
     }
-    fprintf( log , "This is Amal. Will send digest to FD %d and file to FD %d\n" ,
+    fprintf( log , "This is Amal. Will send digest to FD %d and file to FD %d\n\n" ,
                    fd_ctrl , fd_data );
 
     int fd_in = open("amal/bunny.mp4" , O_RDONLY , S_IRUSR | S_IWUSR ) ;
@@ -65,16 +65,16 @@ int main ( int argc , char * argv[] )
 	}
 
 	DH_generate_key(dh);
-	fprintf(log, "prime: ");
+	fprintf(log, "\tPrime        : ");
 	BN_print_fp(log, dh->p);
-    	fprintf( log , "\nIt is indeed prime\n");
-    	fprintf( log , "Root         : ");
+    	fprintf( log , "\n\tIt is indeed prime\n");
+    	fprintf( log , "\tRoot         : ");
     	BN_print_fp(log, dh->g);
-    	fprintf( log , "\nPrivate value: ");
+    	fprintf( log , "\n\tPrivate value: ");
     	BN_print_fp(log, dh->priv_key);
-    	fprintf( log , "\nPublic value : ");
+    	fprintf( log , "\n\tPublic value : ");
     	BN_print_fp(log, dh->pub_key);
-    	
+        fprintf(log, "\nAmal: sending prime, root, and public value to Basim\n\n");
 
  	if (!BN_write_fd(dh->p, fd_ctrl)){
 		fprintf(log, "error 1\n");
@@ -95,13 +95,65 @@ int main ( int argc , char * argv[] )
     	}
 
 
+	int fd_in2 = open("amal/bunny.mp4" , O_RDONLY , S_IRUSR | S_IWUSR ) ;
+	if( fd_in2 == -1 )
+    	{
+        	fprintf( stderr , "This is Amal. Could not open input file\n");
+        	exit(-1) ;
+    	}
+	fprintf(log, "Amal: Successfully opened data file\n");
+	fprintf(log, "Amal: Starting to digest the data file\n");
+
+
+    	//fprintf( log , "\nThis is Amal. Starting to digest the input file\n");
+	//call file digest to get sha
+    	fprintf( log, "\nThis is Amal. Here is the digest of the file:\n");
+    	fflush(log);
+
+	uint8_t digest[1024];
+    	uint8_t *sig;
+	size_t digestLen = fileDigest(fd_in2, digest, fd_data);	
+
+	//RSA *rsa_privK = getRSAfromFile ("amal/amal_priv_key.pem" , 0);
+
+	//uint8_t *encryptedDigest = malloc( RSA_size(rsa_privK ) );  
+    	//if( ! encryptedDigest )
+       // 	{ printf("No memory for Digest\n" );  exit(-1) ; }
+
+	BIO_dump_fp (log, (const char *) digest, digestLen);
+
+	fflush(log);
+  
+	//now elgamal sig stuff
+	fprintf(log, "\nAmal: Generating the elgamal signature\n");
+	fprintf(log, "    r : ");
+	//fprintf(log, "%d\n", digestLen);
+	fflush(log);
+
+	//palceholders for r and s
+	BIGNUM * s = BN_new();
+	BIGNUM * r = BN_new();
+	printf("hello\n");
+
+	BN_CTX * ctx2 = BN_CTX_new();
+        BN_CTX_init(ctx2);
 	
+	elgamalSign(digest, digestLen, dh->p, dh->g, dh->priv_key, r, s, ctx2);
+	printf("hello\n");
+	BN_print_fp(log, r);
+	fflush(log);
 	
+	fprintf(log, "\n    s : ");
+	BN_print_fp(log, s);
+	printf("\n");
+	fflush(log);
     EVP_cleanup();
     ERR_free_strings();
 
+	//free(encryptedDigest);
     fclose( log ) ;  
-
+	close(fd_ctrl);
+	close(fd_data);
     return 0 ;
 }
 

@@ -22,6 +22,7 @@ cd ..
 echo "=============================="
 echo "Compiling all source"
 	gcc amal/amal.c    myCrypto.c   -o amal/amal    -lcrypto
+	gcc myCrypto.c -lcrypto
 	gcc wrappers.c     dispatcher.c -o dispatcher
 
 echo "=============================="

@@ -110,15 +110,18 @@ BIGNUM * BN_myRandom(const BIGNUM *p )
 // to compute the Elgamal signature (r,s) on the 'len'-byte long 'digest'
 void elgamalSign( const uint8_t *digest , int len,  const BIGNUM *q , const BIGNUM *gen ,const BIGNUM *x , BIGNUM *r , BIGNUM *s, BN_CTX * ctx)
 {
+//	printf("at beginning \n");
 	//raise gen to x = result mod q
-	BIGNUM * res;
-	BN_mod_exp(res, gen, x, q, ctx);
+	BIGNUM * res = BN_new();
+	if(!BN_mod_exp(res, gen, x, q, ctx))
+		printf("mod expr failed \n");
 
+//	printf("after 2 lines \n");
 
-	BIGNUM * GCD;
+	BIGNUM * GCD = BN_new();
 	//q2 = q -1
-	BIGNUM * q2;
-	BIGNUM * k;
+	BIGNUM * q2 = BN_new();
+	BIGNUM * k = BN_new();
 	BN_sub(q2, q, BN_value_one());
 
 	//generate random big number
@@ -129,10 +132,11 @@ void elgamalSign( const uint8_t *digest , int len,  const BIGNUM *q , const BIGN
 		BN_gcd(GCD, k, q2, ctx);
 	} while(!BN_is_one(GCD));
 
+//	printf("in middle \n");
 	//compute r
 	BN_mod_exp(r, gen, k, q, ctx);
 	//mod inverse of k
-	BIGNUM * inverse;
+	BIGNUM * inverse = BN_new();
 	BN_mod_inverse(inverse, k, q2, ctx);
 
 	//compute s
@@ -140,6 +144,8 @@ void elgamalSign( const uint8_t *digest , int len,  const BIGNUM *q , const BIGN
 	BN_set_negative(s, 3);
 	BN_add_word(s, *digest);
 	BN_mod_mul(s, inverse, s, q2, ctx);
+
+//	printf("end of sign \n");
 	
 }
 // Use the prime 'q', the primitive root'gen',  and the public 'y' 
@@ -148,24 +154,24 @@ void elgamalSign( const uint8_t *digest , int len,  const BIGNUM *q , const BIGN
 
 int elgamalValidate( const uint8_t *digest , int len ,  const BIGNUM *q , const BIGNUM *gen , const BIGNUM *y , BIGNUM *r , BIGNUM *s , BN_CTX *ctx )
 {
-	BIGNUM * qMinusOne;
+	BIGNUM * qMinusOne = BN_new();
 	BN_sub(qMinusOne, q, BN_value_one());
 	if (BN_cmp(r, qMinusOne) > -1 || BN_cmp(BN_value_one(), r) > -1)
 		return 0;
 
 	//compute Mb
-	BIGNUM * digest2;
+	BIGNUM * digest2 = BN_new();
 	BN_set_word(digest2, *digest);
 
 	//compute V1
-	BIGNUM * v1;
+	BIGNUM * v1 = BN_new();
 	BN_mod_exp(v1, gen, digest2, q, ctx);
 
 	//computer v2
-	BIGNUM * v2;
-	BIGNUM * t1;
-	BIGNUM * t2;
-	BIGNUM * t3;
+	BIGNUM * v2 = BN_new();
+	BIGNUM * t1 = BN_new();
+	BIGNUM * t2 = BN_new();
+	BIGNUM * t3 = BN_new();
 	BN_exp(t1, y, r, ctx);
 	BN_exp(t2, r, s, ctx);
 	BN_mul(t3, t1, t2, ctx);
