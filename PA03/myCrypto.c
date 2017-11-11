@@ -176,35 +176,32 @@ void elgamalSign( const uint8_t *digest , int len,  const BIGNUM *q , const BIGN
 
 int elgamalValidate( const uint8_t *digest , int len ,  const BIGNUM *q , const BIGNUM *gen , const BIGNUM *y , BIGNUM *r , BIGNUM *s , BN_CTX *ctx )
 {
-	/*BIGNUM * qMinusOne = BN_new();
+	BIGNUM * qMinusOne = BN_new();
 	BN_sub(qMinusOne, q, BN_value_one());
 	if (BN_cmp(r, qMinusOne) > -1 || BN_cmp(BN_value_one(), r) > -1)
 		return 0;
 
 	//compute Mb
-	BIGNUM * digest2 = BN_new();
-	BN_set_word(digest2, *digest);
+	BIGNUM * mb = BN_new();
+	BN_set_word(mb, *digest);
 
 	//compute V1
 	BIGNUM * v1 = BN_new();
-	BN_mod_exp(v1, gen, digest2, q, ctx);
+	BN_mod_exp(v1, gen, mb, q, ctx);
 
 	//computer v2
 	BIGNUM * v2 = BN_new();
 	BIGNUM * t1 = BN_new();
 	BIGNUM * t2 = BN_new();
 	BIGNUM * t3 = BN_new();
-	BN_exp(t1, y, r, ctx);
-	BN_exp(t2, r, s, ctx);
-	BN_mul(t3, t1, t2, ctx);
-	BN_mod(v2,t3, q, ctx);
+	BN_mod_exp(v2, y, r, q, ctx);
+	BN_mod_exp(t1, r, s, q, ctx);
+	BN_mod_mul(v2, v2, t1, q, ctx);
 
 	//compare
 	if(BN_cmp(v1, v2) == 0)
 		return 1;
-
-	return 0;*/
-	return 1;
+	return 0;
 }
 //-----------------------------------------------------------------------------
 RSA * getRSAfromFile(char * filename, int public)
