@@ -8,9 +8,7 @@ rm -f dispatcher amal/amal basim/basim basim/logBasim.txt amal/logAmal.txt basim
 
 # Generate public/private key-pair for Amal
 cd amal
-rm -f *.pem 
-openssl genpkey -algorithm RSA -out amal_priv_key.pem -pkeyopt rsa_keygen_bits:2048
-openssl rsa     -pubout        -in  amal_priv_key.pem -out amal_pub_key.pem
+rm -f *.pem
 
 # Now, share Amal's public key with Basim
 cd ../basim
