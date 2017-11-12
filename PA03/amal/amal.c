@@ -34,7 +34,7 @@ int main ( int argc , char * argv[] )
         fprintf( stderr , "This is Amal. Could not create log file\n");
         exit(-1) ;
     }
-    fprintf( log , "This is Amal. Will send digest to FD %d and file to FD %d\n\n" ,
+    fprintf( log , "This is Amal. Will send CTRL to FD %d, DATA to FD %d\n\n" ,
                    fd_ctrl , fd_data );
 
     int fd_in = open("amal/bunny.mp4" , O_RDONLY , S_IRUSR | S_IWUSR ) ;
@@ -52,7 +52,7 @@ int main ( int argc , char * argv[] )
 	
 	DH_generate_parameters_ex(dh, 512, 2, cb);
 
-	fprintf(log, "This is Amal. Here are my params (in hex) :\n");
+	fprintf(log, "This is Amal. Here are my parameters (in Hex) :\n");
 
   
 	BN_CTX * ctx = BN_CTX_new();
@@ -74,7 +74,7 @@ int main ( int argc , char * argv[] )
     	BN_print_fp(log, dh->priv_key);
     	fprintf( log , "\n\tPublic value : ");
     	BN_print_fp(log, dh->pub_key);
-        fprintf(log, "\nAmal: sending prime, root, and public value to Basim\n\n");
+        fprintf(log, "\n\nAmal: sending prime, root, and public value to Basim\n\n");
 
  	if (!BN_write_fd(dh->p, fd_ctrl)){
 		fprintf(log, "error 1\n");
@@ -101,13 +101,13 @@ int main ( int argc , char * argv[] )
         	fprintf( stderr , "This is Amal. Could not open input file\n");
         	exit(-1) ;
     	}
-	fprintf(log, "Amal: Successfully opened data file\n");
+	fprintf(log, "\nAmal: Successfully opened data file\n");
 	fprintf(log, "Amal: Starting to digest the data file\n");
 
 
     	//fprintf( log , "\nThis is Amal. Starting to digest the input file\n");
 	//call file digest to get sha
-    	fprintf( log, "\nThis is Amal. Here is the digest of the file:\n");
+    	fprintf( log, "\nAmal: Here is the digest of the file:\n");
     	fflush(log);
 
 	uint8_t digest[1024];
@@ -125,27 +125,25 @@ int main ( int argc , char * argv[] )
 	fflush(log);
   
 	//now elgamal sig stuff
-	fprintf(log, "\nAmal: Generating the elgamal signature\n");
-	fprintf(log, "    r : ");
+	fprintf(log, "\n\nAmal: Generating the elgamal signature\n");
+	fprintf(log, "\tr : ");
 	//fprintf(log, "%d\n", digestLen);
 	fflush(log);
 
 	//palceholders for r and s
 	BIGNUM * s = BN_new();
 	BIGNUM * r = BN_new();
-	printf("hello\n");
 
 	BN_CTX * ctx2 = BN_CTX_new();
         BN_CTX_init(ctx2);
 	
 	elgamalSign(digest, digestLen, dh->p, dh->g, dh->priv_key, r, s, ctx2);
-	//printf("hello\n");
 	BN_print_fp(log, r);
 	fflush(log);
 
-	fprintf(log, "\n    s : ");
+	fprintf(log, "\n\ts : ");
 	BN_print_fp(log, s);
-	printf("\n");
+	fprintf(log, "\n");
 	fflush(log);
 
 	//write signature over

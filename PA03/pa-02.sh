@@ -1,7 +1,7 @@
 #!/bin/bash
 echo
-echo "Script to run Programming Assignment #3"
-echo "By: Sydney and James"
+echo "Script to run PA-03"
+echo "By: Sydney Edwards and James Nordike"
 echo
 
 rm -f dispatcher amal/amal basim/basim basim/logBasim.txt amal/logAmal.txt basim/bunny.mp4 

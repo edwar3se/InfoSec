@@ -69,22 +69,14 @@ size_t fileDigest( int fd_in , uint8_t *digest , int fd_save )
 int BN_write_fd( const BIGNUM *bn , int fd_out)
 {
 	unsigned char to[64];
-
 	int len = BN_bn2bin(bn, to);
 
-
-	printf("in write 1:  %d \n", len);
 	if(len == -1)
 		return 0;
 
 
 	write(fd_out, &len, sizeof(int));
-
-       printf("size has been written \n");
-
 	write(fd_out, to, len);
-
-	printf("to has been written too \n");
 	return 1;
 }
 
@@ -94,18 +86,13 @@ int BN_write_fd( const BIGNUM *bn , int fd_out)
 BIGNUM * BN_read_fd( int fd_in )
 {
 	int size;
-
-
-	printf("reading\n");
 	if(read(fd_in, &size, sizeof(int)) < 0)
-		printf("why \n");
+		return NULL;
 
-	char num[size];
-
-	printf("%d\n", size); 
+	char num[size]; 
 
 	if(read(fd_in, num, size) == 0)
-		printf("WHYYYY \n");
+		return NULL;
 
 	BIGNUM* bn = BN_bin2bn(num, size, NULL);
 	if (bn == NULL)	{
@@ -132,7 +119,6 @@ BIGNUM * BN_myRandom(const BIGNUM *p )
 // to compute the Elgamal signature (r,s) on the 'len'-byte long 'digest'
 void elgamalSign( const uint8_t *digest , int len,  const BIGNUM *q , const BIGNUM *gen ,const BIGNUM *x , BIGNUM *r , BIGNUM *s, BN_CTX * ctx)
 {
-//	printf("at beginning \n");
 	//raise gen to x = result mod q
 	BIGNUM * res = BN_new();
 	if(!BN_mod_exp(res, gen, x, q, ctx))
@@ -154,7 +140,6 @@ void elgamalSign( const uint8_t *digest , int len,  const BIGNUM *q , const BIGN
 		BN_gcd(GCD, k, q2, ctx);
 	} while(!BN_is_one(GCD));
 
-//	printf("in middle \n");
 	//compute r
 	BN_mod_exp(r, gen, k, q, ctx);
 	//mod inverse of k
@@ -166,9 +151,6 @@ void elgamalSign( const uint8_t *digest , int len,  const BIGNUM *q , const BIGN
 	BN_set_negative(s, 3);
 	BN_add_word(s, *digest);
 	BN_mod_mul(s, inverse, s, q2, ctx);
-
-//	printf("end of sign \n");
-	
 }
 // Use the prime 'q', the primitive root'gen',  and the public 'y' 
 // to validate the Elgama signature (r,s) on tt'

@@ -34,7 +34,7 @@ int main ( int argc , char * argv[] )
         fprintf( stderr , "This is Basim. Could not create log file\n");
         exit(-1) ;
     }
-    fprintf( log , "This is Basim. Will receive digest from FD %d and file from FD %d\n" ,
+    fprintf( log , "This is Basim. Will receive CTRL from FD %d, data from FD %d\n" ,
                    fd_ctrl , fd_data );
 
     /*int fd_out = open("basim/bunny.mp4" , O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR ) ;
@@ -54,25 +54,25 @@ int main ( int argc , char * argv[] )
 
 	prime = BN_read_fd(fd_ctrl);
 
-	fprintf(log, "Basim: Received these parameters(in hex) from Amal \n");
+	fprintf(log, "Basim: Received these parameters(in Hex) from Amal \n");
 
 	fflush(log);
-	fprintf(log, "    Prime:    ");
+	fprintf(log, "\tPrime        : ");
 	BN_print_fp(log, prime);
 
 	fflush(log);
 	root = BN_read_fd(fd_ctrl);
-	fprintf(log, "\n    Root:    ");
+	fprintf(log, "\n\tRoot         : ");
 	BN_print_fp(log, root);
 
 	fflush(log);
 	pub_key = BN_read_fd(fd_ctrl);
-	fprintf(log, "\n    Public Value:    ");
+	fprintf(log, "\n\tPublic Value : ");
 	BN_print_fp(log, pub_key);
 	fflush(log);
 
-	fprintf(log, "\n Basim: Starting to recieve incoming file and compute it's digest\n");
-	fprintf(log, "Basim: Here is my locally computed digest of the incoming file:\n");
+	fprintf(log, "\n\nBasim: Starting to recieve incoming file and compute it's digest\n");
+	fprintf(log, "\nBasim: Here is my locally-computed digest of the incoming file:\n");
 	fflush(log);
 	
 	//read incoming file
@@ -90,12 +90,13 @@ int main ( int argc , char * argv[] )
 	BIO_dump_fp (log, (const char *) fDigest, encrDig_len);
     	fflush(log);
 	
-	fprintf(log, "\nr : ");
+	fprintf(log, "Basim: Received this Elgamal signature from Amal:\n");
+	fprintf(log, "\tr : ");
 	BIGNUM * r;
 	r = BN_read_fd(fd_ctrl);
 	BN_print_fp(log, r);
 
-	fprintf(log,"\ns : ");
+	fprintf(log,"\n\ts : ");
 	BIGNUM * s;
 	s = BN_read_fd(fd_ctrl);
 	BN_print_fp(log, s);

@@ -29,7 +29,7 @@ int main( int argc , char *argv[] )
     Pipe( AtoB_ctrl ) ;  // create pipe for Amal-to-Basim control
     Pipe( AtoB_data ) ;  // create pipe for Amal-to-Basim data
 
-    printf("\nDispatcher started and created both pipes\n") ;
+    printf("\nDispatcher started and created these pipes\n") ;
     printf("Amal-to-Basim control pipe: read=%d  write=%d\n", AtoB_ctrl[READ_END] , AtoB_ctrl[WRITE_END] ) ;
     printf("Amal-to-Basim data    pipe: read=%d  write=%d\n", AtoB_data[READ_END] , AtoB_data[WRITE_END] ) ;
 
