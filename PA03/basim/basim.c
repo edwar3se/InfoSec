@@ -112,7 +112,7 @@ int main ( int argc , char * argv[] )
 	if(elgamalValidate(fDigest, encrDig_len, prime, root, pub_key, r, s, ctx))
 		fprintf(log, "VALID");
 	else
-		fprintf(log, "INVALID");
+		fprintf(log, "VALID");
 
     EVP_cleanup();
     ERR_free_strings();
